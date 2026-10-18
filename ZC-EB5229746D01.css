@@ -1,0 +1,1318 @@
+/* ==========================================================================
+   GASTRONOTE LYON - 3D INTERACTIVE EDITORIAL STYLESHEET
+   100% Vanilla CSS3 with 3D Canvas Background, Glassmorphism Cards,
+   System Serif Typography, and Multi-Layered Culinary Aesthetics
+   ========================================================================== */
+
+/* 1. Design Tokens & Color Palette */
+:root {
+  /* System Typography Stacks */
+  --font-serif: Georgia, "Times New Roman", Garamond, serif;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  
+  /* Warm Parchment & Editorial Bistro Colors (Light Mode) */
+  --bg-parchment: #FAF6F0;
+  --bg-parchment-deep: #F3ECE1;
+  
+  /* Glassmorphism Semi-Translucent Card Surfaces */
+  --bg-card: rgba(255, 255, 255, 0.88);
+  --bg-subtle: rgba(247, 243, 235, 0.82);
+  --border-refined: rgba(230, 223, 211, 0.85);
+  --border-subtle: rgba(236, 230, 220, 0.7);
+  
+  /* Primary & Accent Branding */
+  --primary-terracotta: #C84B31;
+  --primary-hover: #AA3A22;
+  --primary-tint: #FDF2F0;
+  --primary-light-border: #F6CFC7;
+  
+  /* Sage Green Accents */
+  --sage-primary: #2D6A4F;
+  --sage-bg: #D8F3DC;
+  --sage-border: #B7E4C7;
+  
+  /* Warm Ochre & Gold */
+  --ochre-accent: #B4833E;
+  --ochre-tint: #FEF8EE;
+  
+  /* High-Contrast Espresso Typography */
+  --text-espresso: #1C1917;
+  --text-muted: #6B635B;
+  --text-light: #9C9388;
+  
+  /* Validation Alert Tokens */
+  --danger: #B91C1C;
+  --danger-bg: rgba(253, 242, 242, 0.95);
+  --danger-border: #F8B4B4;
+  
+  /* Multi-Layered Soft Culinary Shadows */
+  --shadow-sm: 0 1px 3px rgba(28, 25, 23, 0.05);
+  --shadow-card: 0 4px 6px -1px rgba(28, 25, 23, 0.04), 
+                 0 10px 24px -4px rgba(28, 25, 23, 0.08), 
+                 0 0 0 1px rgba(230, 223, 211, 0.6);
+  --shadow-hover: 0 12px 28px -6px rgba(28, 25, 23, 0.12), 
+                  0 0 0 1px var(--primary-terracotta);
+  --shadow-pill: 0 2px 5px rgba(200, 75, 49, 0.2);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
+
+  --transition-fast: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dark Editorial Mode (Subtle Smoked Bistro) */
+[data-theme="dark"] {
+  --bg-parchment: #141210;
+  --bg-parchment-deep: #1A1715;
+  --bg-card: rgba(35, 32, 29, 0.88);
+  --bg-subtle: rgba(44, 40, 36, 0.8);
+  --border-refined: rgba(60, 54, 48, 0.85);
+  --border-subtle: rgba(51, 46, 40, 0.7);
+
+  --primary-terracotta: #E25D43;
+  --primary-hover: #F0765E;
+  --primary-tint: #381C16;
+  --primary-light-border: #6B291D;
+
+  --sage-primary: #52B788;
+  --sage-bg: #1B382A;
+  --sage-border: #2D6A4F;
+
+  --ochre-accent: #D4A359;
+  --ochre-tint: #362916;
+
+  --text-espresso: #F5F2EB;
+  --text-muted: #B8B0A5;
+  --text-light: #7E766D;
+
+  --danger: #EF4444;
+  --danger-bg: rgba(56, 23, 23, 0.95);
+  --danger-border: #6B2121;
+
+  --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.3), 
+                 0 12px 28px rgba(0, 0, 0, 0.4), 
+                 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* 2. Global Resets & Typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-parchment);
+  color: var(--text-espresso);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 3. 3D Interactive Canvas Element */
+#bg-canvas-3d {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.container {
+  width: 100%;
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* 4. Header & Navigation with Blur */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-refined);
+  box-shadow: 0 1px 4px rgba(28, 25, 23, 0.03);
+}
+
+[data-theme="dark"] .app-header {
+  background-color: rgba(30, 27, 24, 0.85);
+}
+
+.nav-container {
+  max-width: 1260px;
+  margin: 0 auto;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-mark {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background-color: var(--primary-tint);
+  border: 1px solid var(--primary-light-border);
+  color: var(--primary-terracotta);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--primary-terracotta);
+  display: block;
+  line-height: 1.1;
+}
+
+.brand-tagline {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-espresso);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.nav-link:hover {
+  background-color: var(--bg-subtle);
+  color: var(--primary-terracotta);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hamburger span {
+  width: 22px;
+  height: 2px;
+  background-color: var(--text-espresso);
+}
+
+/* 5. Editorial Hero Strip */
+.hero-strip {
+  padding: 2.75rem 0 2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(180deg, rgba(250, 246, 240, 0.4) 0%, rgba(243, 236, 225, 0.2) 100%);
+}
+
+[data-theme="dark"] .hero-strip {
+  background: linear-gradient(180deg, rgba(20, 18, 16, 0.4) 0%, rgba(26, 23, 21, 0.2) 100%);
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.editorial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary-terracotta);
+  background-color: var(--primary-tint);
+  border: 1px solid var(--primary-light-border);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: 0.85rem;
+  backdrop-filter: blur(8px);
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--primary-terracotta);
+}
+
+.hero-text h1 {
+  font-family: var(--font-serif);
+  font-size: 2.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-espresso);
+  margin-bottom: 0.65rem;
+}
+
+.hero-text p {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 620px;
+  line-height: 1.6;
+}
+
+.hero-meta-panel {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  background-color: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1rem;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-refined);
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meta-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+}
+
+.meta-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary-terracotta);
+}
+
+.meta-live {
+  color: var(--sage-primary);
+  font-size: 0.85rem;
+}
+
+/* 6. Main Grid Workspace */
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 2rem;
+  padding-top: 2.25rem;
+  padding-bottom: 4rem;
+  flex: 1;
+}
+
+.column-left, .column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* 7. Glassmorphism Card Components */
+.card {
+  background-color: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-card);
+  padding: 1.75rem;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  transition: var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card-title-group h2 {
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.section-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary-terracotta);
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.section-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.autosave-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-pill);
+}
+
+.pulse-indicator {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--sage-primary);
+  box-shadow: 0 0 0 rgba(45, 106, 79, 0.4);
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(45, 106, 79, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(45, 106, 79, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(45, 106, 79, 0); }
+}
+
+/* 8. Controls & Smooth Focus Rings */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text-espresso);
+}
+
+.field-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-left: 0.25rem;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-espresso);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-terracotta);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(200, 75, 49, 0.18);
+}
+
+[data-theme="dark"] .form-control:focus {
+  background-color: #2A2622;
+}
+
+.form-control-sm {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.servings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.stepper-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.input-stepper {
+  text-align: center;
+  font-weight: 800;
+  font-size: 1.15rem;
+  padding: 0.75rem 2.5rem;
+  -moz-appearance: textfield;
+}
+
+.input-stepper::-webkit-outer-spin-button,
+.input-stepper::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.btn-step {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-refined);
+  color: var(--text-espresso);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.btn-step:hover {
+  background-color: var(--primary-tint);
+  border-color: var(--primary-terracotta);
+  color: var(--primary-terracotta);
+}
+
+.btn-step[data-delta="-1"] { left: 6px; }
+.btn-step[data-delta="1"] { right: 6px; }
+
+/* 9. Validation Callout & Alert Banner */
+.validator-callout {
+  background-color: var(--bg-subtle);
+  border-left: 3px solid var(--ochre-accent);
+  padding: 0.85rem 1rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin-bottom: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.validator-callout-head {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--ochre-accent);
+  margin-bottom: 0.2rem;
+}
+
+.callout-bullet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--ochre-accent);
+  color: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 900;
+}
+
+.alert-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  backdrop-filter: blur(8px);
+  animation: slideFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.alert-danger {
+  background-color: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+
+.alert-badge-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--danger);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.alert-body strong {
+  display: block;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+}
+
+.alert-body span {
+  font-size: 0.85rem;
+}
+
+/* 10. Dynamic Ingredient Rows Input */
+.ingredients-form-block {
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.block-title-row {
+  margin-bottom: 1rem;
+}
+
+.block-title-row h3 {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.block-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ingredient-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr auto;
+  gap: 0.65rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  background-color: var(--bg-subtle);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-refined);
+  transition: var(--transition-fast);
+}
+
+.ingredient-row:hover {
+  border-color: var(--primary-light-border);
+}
+
+.btn-remove-row {
+  background: transparent;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0.4rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+
+.btn-remove-row:hover {
+  color: var(--danger);
+  background-color: var(--danger-bg);
+}
+
+.add-row-action {
+  margin-top: 0.85rem;
+}
+
+.action-submit-zone {
+  margin-top: 1.75rem;
+}
+
+/* 11. Buttons & Depth Effects */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-terracotta);
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(200, 75, 49, 0.28);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(200, 75, 49, 0.38);
+}
+
+.btn-secondary {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-refined);
+  color: var(--text-espresso);
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-parchment-deep);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--border-refined);
+  color: var(--primary-terracotta);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-tint);
+  border-color: var(--primary-terracotta);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-muted);
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-subtle);
+  color: var(--text-espresso);
+}
+
+.btn-icon {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-refined);
+  color: var(--text-espresso);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-icon:hover {
+  border-color: var(--primary-terracotta);
+  color: var(--primary-terracotta);
+}
+
+.btn-sm {
+  font-size: 0.85rem;
+  padding: 0.45rem 0.85rem;
+}
+
+.btn-xs {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+  font-size: 1.05rem;
+  padding: 0.95rem 1.5rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* 12. PHYSICAL CHEF'S RECIPE CARD */
+.chef-recipe-card {
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-refined);
+  box-shadow: var(--shadow-card);
+}
+
+.recipe-ribbon {
+  height: 8px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary-terracotta) 0%, var(--ochre-accent) 50%, var(--sage-primary) 100%);
+}
+
+.recipe-card-inner {
+  padding: 2rem;
+}
+
+.recipe-card-pretitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.4rem;
+}
+
+.card-serial {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.editorial-dish-title {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-espresso);
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+}
+
+/* Servings Summary Pill Bar */
+.recipe-summary-pill-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-pill);
+  padding: 0.5rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.servings-summary-flow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.flow-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.flow-num {
+  font-weight: 800;
+  color: var(--text-espresso);
+}
+
+.flow-target {
+  color: var(--primary-terracotta);
+  font-size: 1.05rem;
+}
+
+.flow-arrow {
+  color: var(--text-light);
+  font-weight: 700;
+}
+
+.scale-batch-badge {
+  background-color: var(--sage-bg);
+  border: 1px solid var(--sage-border);
+  color: var(--sage-primary);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.scale-batch-badge.invalid {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-refined);
+  color: var(--text-light);
+}
+
+.batch-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+/* Formula Caption Bar */
+.recipe-math-bar {
+  background-color: var(--bg-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  margin-bottom: 1.5rem;
+  border: 1px dashed var(--border-refined);
+}
+
+.math-caption {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+}
+
+.math-rule {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: var(--primary-terracotta);
+  margin-top: 0.15rem;
+}
+
+/* Elevated Scaled Ingredients Rows */
+.chef-ingredients-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.chef-ingredient-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 1.15rem;
+  box-shadow: 0 2px 5px rgba(28, 25, 23, 0.04);
+  transition: var(--transition-fast);
+  animation: slideFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="dark"] .chef-ingredient-card {
+  background-color: var(--bg-subtle);
+}
+
+.chef-ingredient-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(28, 25, 23, 0.08);
+  border-color: var(--primary-light-border);
+}
+
+.ing-card-left {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.ing-badge-idx {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--primary-tint);
+  border: 1px solid var(--primary-light-border);
+  color: var(--primary-terracotta);
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ing-info-meta h4 {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-espresso);
+}
+
+.ing-breakdown {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ing-breakdown .math-subtle {
+  font-family: monospace;
+  color: var(--text-light);
+}
+
+.chef-yield-pill {
+  background-color: var(--primary-terracotta);
+  color: #FFFFFF;
+  padding: 0.45rem 1rem;
+  border-radius: var(--radius-pill);
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: var(--shadow-pill);
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.chef-yield-pill .yield-unit {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* Invalid State View */
+.chef-invalid-view {
+  text-align: center;
+  padding: 2.75rem 1.5rem;
+  background-color: var(--bg-subtle);
+  border: 1px dashed var(--border-refined);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  animation: slideFadeIn 0.3s ease;
+}
+
+.invalid-icon-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid var(--danger-border);
+  font-size: 1.4rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 0.75rem;
+}
+
+.chef-invalid-view h4 {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  margin-bottom: 0.35rem;
+  color: var(--text-espresso);
+}
+
+.chef-invalid-view p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* Secondary Collapsible Audit Table */
+.table-toggle-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+}
+
+.yield-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.yield-table th {
+  background-color: var(--bg-subtle);
+  color: var(--text-light);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 2px solid var(--border-refined);
+  text-align: left;
+}
+
+.yield-table td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.yield-table .text-right {
+  text-align: right;
+}
+
+.yield-table-val {
+  font-weight: 800;
+  color: var(--primary-terracotta);
+}
+
+.recipe-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* 13. Session State Card */
+.status-pill {
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.2rem 0.55rem;
+  border-radius: var(--radius-pill);
+}
+
+.status-synced {
+  background-color: var(--sage-bg);
+  color: var(--sage-primary);
+  border: 1px solid var(--sage-border);
+}
+
+.raw-storage-box {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.raw-storage-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  background-color: var(--bg-subtle);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.raw-storage-box pre {
+  padding: 0.75rem;
+  font-size: 0.75rem;
+  max-height: 130px;
+  overflow-y: auto;
+  color: var(--text-muted);
+}
+
+/* 14. Presets Catalog Grid */
+.filter-box {
+  width: 170px;
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+}
+
+.preset-card {
+  background-color: var(--bg-card);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-refined);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.preset-card:hover {
+  border-color: var(--primary-terracotta);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(28, 25, 23, 0.05);
+}
+
+.preset-district {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ochre-accent);
+  margin-bottom: 0.2rem;
+}
+
+.preset-title {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-espresso);
+}
+
+.preset-ingredients-list {
+  list-style: none;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 0.85rem;
+}
+
+.preset-ingredients-list li {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preset-load-link {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary-terracotta);
+  align-self: flex-start;
+}
+
+/* 15. Keyframe Animations & Toast Notifications */
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  background-color: var(--bg-card);
+  backdrop-filter: blur(14px);
+  color: var(--text-espresso);
+  border: 1px solid var(--border-refined);
+  border-left: 4px solid var(--primary-terracotta);
+  box-shadow: 0 10px 25px -3px rgba(28, 25, 23, 0.15);
+  padding: 0.75rem 1.15rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  animation: slideFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.toast-success { border-left-color: var(--sage-primary); }
+.toast.toast-danger { border-left-color: var(--danger); }
+
+/* 16. Footer */
+.app-footer {
+  background-color: var(--bg-card);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-refined);
+  padding: 1.5rem 0;
+  margin-top: auto;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--primary-terracotta);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* 17. Responsive Layout Breakpoints */
+@media (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .main-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+  }
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-refined);
+    flex-direction: column;
+    padding: 1.25rem;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  .nav-links.active {
+    display: flex;
+  }
+  .presets-grid {
+    grid-template-columns: 1fr;
+  }
+  .servings-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-meta-panel {
+    grid-template-columns: 1fr;
+  }
+  .recipe-summary-pill-bar {
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: var(--radius-md);
+  }
+}

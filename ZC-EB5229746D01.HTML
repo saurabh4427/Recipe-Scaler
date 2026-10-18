@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gastronote Lyon | Chef's 3D Interactive Recipe Scaler</title>
+  <!-- Standard competition stylesheet link -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Alternative competition named link comment: <CompetitionID>_style.css -->
+  <script src="script.js" defer></script>
+  <!-- Alternative competition named script comment: <CompetitionID>_script.js -->
+</head>
+<body data-theme="light">
+  <!-- Interactive 3D Perspective Canvas Background -->
+  <canvas id="bg-canvas-3d" aria-hidden="true"></canvas>
+
+  <!-- Culinary Header / Masthead -->
+  <header class="app-header" id="top">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/>
+            <line x1="6" y1="17" x2="18" y2="17"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Gastronote Lyon</span>
+          <span class="brand-tagline">Bouchon Yields &amp; Culinary Scaler</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="nav-links" id="nav-menu" aria-label="Main Navigation">
+        <a href="#scaler-config" class="nav-link">Setup &amp; Scale</a>
+        <a href="#scaled-recipe-card" class="nav-link">Chef's Card</a>
+        <a href="#servings-validator" class="nav-link">Ratio Guide</a>
+        <a href="#state-persistence" class="nav-link">Saved Session</a>
+        <a href="#lyon-presets" class="nav-link">Bouchon Presets</a>
+      </nav>
+
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn btn-icon" title="Toggle Theme" aria-label="Toggle visual theme">
+          <svg id="theme-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
+        <button id="btn-reset-demo" class="btn btn-sm btn-secondary" title="Reset to default recipe">
+          Reset Demo
+        </button>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle navigation drawer">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Editorial Hero Strip -->
+  <section class="hero-strip">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <div class="editorial-badge">
+          <span class="badge-dot"></span> Lyon, France &bull; Capitale Mondiale de la Gastronomie
+        </div>
+        <h1>The Editorial Recipe Scaler</h1>
+        <p>A precision culinary workbook for Bouchon kitchens. Recalibrate prep ratios for dinner service across Vieux-Lyon and Presqu'île with authentic mathematical accuracy.</p>
+      </div>
+
+      <div class="hero-meta-panel">
+        <div class="meta-item">
+          <span class="meta-label">Kitchen District</span>
+          <span class="meta-value">Presqu'île Bistro</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Active Multiplier</span>
+          <span class="meta-value" id="metric-ratio">1.50&times;</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Autosave</span>
+          <span class="meta-value meta-live" id="metric-sync">Local Sync Active</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Asymmetric Workspace Layout -->
+  <main class="container main-layout">
+    
+    <!-- LEFT WORKSPACE: Input Configuration & Persistence Guard -->
+    <div class="column-left">
+      
+      <!-- RECIPE CONFIGURATION SECTION -->
+      <section class="card config-card" id="scaler-config">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="section-tag">Bouchon Kitchen Setup</span>
+            <h2>Recipe Proportions</h2>
+          </div>
+          <span class="autosave-tag" id="autosave-status" title="Saves in browser storage automatically">
+            <span class="pulse-indicator"></span> Draft autosaved locally
+          </span>
+        </div>
+
+        <form id="scaler-form" class="scaler-form" onsubmit="return false;">
+          <!-- Dish Name Input -->
+          <div class="form-group">
+            <label for="recipe-dish-name">
+              Dish Name
+              <span class="field-hint">(Bouchon Lyonnais specialty)</span>
+            </label>
+            <input 
+              type="text" 
+              id="recipe-dish-name" 
+              class="form-control" 
+              placeholder="e.g. Traditional Salade Lyonnaise" 
+              value="Traditional Salade Lyonnaise" 
+              required
+            >
+          </div>
+
+          <!-- Dual Servings Setup -->
+          <div class="servings-grid">
+            <div class="form-group">
+              <label for="recipe-servings-makes">
+                Original Servings
+                <span class="field-hint">(Yield Recipe Makes)</span>
+              </label>
+              <div class="stepper-wrap">
+                <button type="button" class="btn-step" data-target="recipe-servings-makes" data-delta="-1" aria-label="Decrease original servings">&minus;</button>
+                <input 
+                  type="number" 
+                  id="recipe-servings-makes" 
+                  class="form-control input-stepper" 
+                  min="0" 
+                  step="0.5" 
+                  value="4" 
+                  required
+                >
+                <button type="button" class="btn-step" data-target="recipe-servings-makes" data-delta="1" aria-label="Increase original servings">+</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="recipe-servings-wanted">
+                Servings Wanted
+                <span class="field-hint">(Target Service Yield)</span>
+              </label>
+              <div class="stepper-wrap">
+                <button type="button" class="btn-step" data-target="recipe-servings-wanted" data-delta="-1" aria-label="Decrease target servings">&minus;</button>
+                <input 
+                  type="number" 
+                  id="recipe-servings-wanted" 
+                  class="form-control input-stepper" 
+                  min="0" 
+                  step="0.5" 
+                  value="6" 
+                  required
+                >
+                <button type="button" class="btn-step" data-target="recipe-servings-wanted" data-delta="1" aria-label="Increase target servings">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROPORTIONAL RATIO RULE CALLOUT -->
+          <div class="validator-callout" id="servings-validator">
+            <div class="validator-callout-head">
+              <span class="callout-bullet">!</span>
+              <strong>Kitchen Ratio Rule:</strong>
+            </div>
+            <p>Servings must be strictly greater than zero. If either field is empty, 0, or negative, proportions halt immediately and display a warning banner.</p>
+          </div>
+
+          <!-- HIGH-CONTRAST WARNING BANNER -->
+          <div id="error-banner" class="alert-banner alert-danger hidden" role="alert" aria-live="polite">
+            <div class="alert-badge-icon" aria-hidden="true">!</div>
+            <div class="alert-body">
+              <strong>Calculation Halted:</strong>
+              <span id="error-banner-text">Please enter valid, positive servings to calculate proportions.</span>
+            </div>
+          </div>
+
+          <!-- Base Ingredients Input Rows -->
+          <div class="ingredients-form-block">
+            <div class="block-title-row">
+              <h3>Base Ingredients &amp; Amounts (Minimum 3)</h3>
+              <span class="block-sub">Name, quantity, and kitchen measurement</span>
+            </div>
+            
+            <div class="ingredients-list-inputs" id="ingredients-input-list">
+              <!-- Dynamically rendered rows -->
+            </div>
+
+            <div class="add-row-action">
+              <button type="button" id="btn-add-ingredient" class="btn btn-outline btn-sm">
+                + Add Another Ingredient Row
+              </button>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTON -->
+          <div class="action-submit-zone">
+            <button type="button" id="btn-calculate" class="btn btn-primary btn-block btn-lg">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="2" width="16" height="20" rx="2"/>
+                <line x1="8" y1="6" x2="16" y2="6"/>
+                <line x1="16" y1="14" x2="16" y2="14.01"/>
+                <line x1="12" y1="14" x2="12" y2="14.01"/>
+                <line x1="8" y1="14" x2="8" y2="14.01"/>
+                <line x1="16" y1="18" x2="16" y2="18.01"/>
+                <line x1="12" y1="18" x2="12" y2="18.01"/>
+                <line x1="8" y1="18" x2="8" y2="18.01"/>
+              </svg>
+              <span>Calculate Scaled Amounts</span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- SESSION STATE & STORAGE DETAILS -->
+      <section class="card persistence-card" id="state-persistence">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="section-tag">Kitchen Ledger</span>
+            <h2>Session Draft &amp; Data Sync</h2>
+          </div>
+          <span class="status-pill status-synced">Synced</span>
+        </div>
+        <p class="section-desc">Active changes are serialized and autosaved into browser storage (key: <code>gastronote_lyon_state</code>). Refresh the window at any moment to test complete state preservation.</p>
+        
+        <div class="raw-storage-box">
+          <div class="raw-storage-bar">
+            <span>JSON State Inspector</span>
+            <button id="btn-copy-json" class="btn btn-xs btn-ghost">Copy JSON</button>
+          </div>
+          <pre id="storage-raw-display"><code>Loading state...</code></pre>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT WORKSPACE: Chef's Printed Recipe Card & Presets Catalog -->
+    <div class="column-right">
+
+      <!-- CHEF'S EDITORIAL RECIPE CARD -->
+      <section class="card chef-recipe-card" id="scaled-recipe-card">
+        <!-- Decorative Top Accent Ribbon -->
+        <div class="recipe-ribbon" aria-hidden="true"></div>
+
+        <div class="recipe-card-inner">
+          <div class="recipe-card-header">
+            <div class="recipe-card-pretitle">
+              <span class="section-tag">Kitchen Yields</span>
+              <span class="card-serial">Lyon Prep Sheet #04</span>
+            </div>
+            <h2 class="editorial-dish-title" id="display-dish-name">Traditional Salade Lyonnaise</h2>
+          </div>
+
+          <!-- Recipe Summary Pill Bar -->
+          <div class="recipe-summary-pill-bar">
+            <div class="servings-summary-flow">
+              <span class="flow-label">Servings:</span>
+              <span class="flow-num" id="display-servings-makes">4</span>
+              <span class="flow-arrow">&rarr;</span>
+              <span class="flow-num flow-target" id="display-servings-wanted">6</span>
+            </div>
+            
+            <div class="scale-batch-badge" id="scale-factor-badge">
+              <span class="batch-label">Batch:</span>
+              <strong id="scale-factor-val">1.50&times;</strong>
+            </div>
+          </div>
+
+          <!-- Mathematical Formula Note -->
+          <div class="recipe-math-bar">
+            <div class="math-caption">Proportional Formula:</div>
+            <div class="math-rule">
+              New Amount = (Original Amount &times; Servings Wanted) &divide; Servings Recipe Makes
+            </div>
+          </div>
+
+          <!-- Elevated Ingredient Cards Container -->
+          <div class="chef-ingredients-stack" id="chef-ingredients-list">
+            <!-- Dynamically populated elevated cards -->
+          </div>
+
+          <!-- Invalid Servings State Notice -->
+          <div id="yield-invalid-state" class="chef-invalid-view hidden">
+            <div class="invalid-icon-circle">!</div>
+            <h4>Proportions Suspended</h4>
+            <p id="yield-invalid-message">Enter valid, positive numbers for both "Original Servings" and "Servings Wanted" to reveal scaled amounts.</p>
+          </div>
+
+          <!-- Secondary Table View (Collapsible kitchen sheet) -->
+          <div class="table-toggle-wrap">
+            <button type="button" class="btn btn-xs btn-ghost" id="toggle-table-btn">
+              <span>Toggle Numerical Audit Table</span> &darr;
+            </button>
+          </div>
+
+          <div class="table-responsive hidden" id="audit-table-wrapper">
+            <table class="yield-table" id="yield-table" aria-label="Scaled Ingredients Yield Table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Ingredient</th>
+                  <th scope="col">Base Amount</th>
+                  <th scope="col">Proportional Formula</th>
+                  <th scope="col" class="text-right">New Scaled Amount</th>
+                </tr>
+              </thead>
+              <tbody id="yield-tbody">
+                <!-- Dynamically populated rows -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Recipe Card Footer Controls -->
+          <div class="recipe-card-footer">
+            <button id="btn-copy-yields" class="btn btn-secondary btn-sm">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+              <span>Copy Prep Sheet</span>
+            </button>
+            <button id="btn-print-recipe" class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"/>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                <rect x="6" y="14" width="12" height="8"/>
+              </svg>
+              <span>Print Recipe Card</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LYON PRESETS CATALOG -->
+      <section class="card presets-card" id="lyon-presets">
+        <div class="card-header">
+          <div class="card-title-group">
+            <span class="section-tag">Authentic Bouchon Data</span>
+            <h2>Classic Lyon Bouchon Recipes</h2>
+          </div>
+          <div class="filter-box">
+            <input type="text" id="preset-search" class="form-control form-control-sm" placeholder="Search presets...">
+          </div>
+        </div>
+        <p class="section-desc">Select any authentic Lyonnais recipe to load its base ingredients directly into the configuration engine.</p>
+        
+        <div class="presets-grid" id="presets-container">
+          <!-- Dynamically populated preset cards -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Interactive Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- Editorial Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <strong>Gastronote Lyon</strong> &bull; Chef's Proportional Scaling Architecture. 100% Vanilla HTML5, CSS3, ES6+.
+      </div>
+      <div class="footer-links">
+        <a href="#top">Top of Page</a> &bull;
+        <a href="#scaler-config">Configuration</a> &bull;
+        <a href="#scaled-recipe-card">Chef's Card</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
